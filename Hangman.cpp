@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 #include <cstdlib>
 #include <ctime>
+
 using namespace std;
 
 void displayWord(const string& word, const vector<bool>& guessed) 
@@ -32,9 +34,30 @@ bool isWordGuessed(const vector<bool>& guessed)
     return true;
 }
 
+vector<string> loadWordsFromFile(const string& filename) 
+{
+    vector<string> words;
+    ifstream file(filename);
+    if (file.is_open()) 
+    {
+        string word;
+        while (getline(file, word)) 
+        {
+            words.push_back(word);
+        }
+        file.close();
+    } 
+    else 
+    {
+        cout << "Error: Could not open file " << filename << endl;
+        exit(1);
+    }
+    return words;
+}
+
 int main() 
 {
-    vector<string> words = {"programming", "hangman", "computer", "game", "developer"};
+    vector<string> words = loadWordsFromFile("words.txt");
     srand(static_cast<unsigned>(time(0)));
     string word = words[rand() % words.size()];
 
@@ -43,8 +66,7 @@ int main()
 
     cout << "Welcome to Hangman!" << endl;
 
-    while (attempts > 0) 
-    {
+    while (attempts > 0) {
         cout << "\nAttempts left: " << attempts << endl;
         displayWord(word, guessed);
 
